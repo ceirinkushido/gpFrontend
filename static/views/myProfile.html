@@ -1,0 +1,23 @@
+<!--
+    name TEXT,
+    email TEXT,
+    username TEXT,
+    password TEXT
+-->
+<div class="form-group">
+  <label for="showPreviousData">Mostrar dados atuais?</label>
+  <input type="checkbox" id="showPreviousData" onchange="loadMe('userEdit')" data-toggle="toggle" data-on="Sim" data-off="Não">
+</div>
+<div class="form-group">
+  <label for="ChangeName">Name</label>
+  <input type="text" class="form-control" id="ChangeName" name="name" placeholder="loading...">
+</div>
+<div class="form-group">
+  <label for="ChangeEmail">Email</label>
+  <input type="text" class="form-control" id="ChangeEmail" name="email" placeholder="loading...">
+</div>
+<div class="form-group">
+  <label for="ChangePassword">Password</label>
+  <input type="password" class="form-control" id="ChangePassword" name="password" placeholder="Password">
+</div>
+  <button type="submit" class="btn btn-primary" onclick="userEdit()">Submit</button>

@@ -1,0 +1,152 @@
+<style>
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+    
+    .switch input { 
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+    
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+    
+    input:checked + .slider {
+      background-color: #2196F3;
+    }
+    
+    input:focus + .slider {
+      box-shadow: 0 0 1px #2196F3;
+    }
+    
+    input:checked + .slider:before {
+      -webkit-transform: translateX(26px);
+      -ms-transform: translateX(26px);
+      transform: translateX(26px);
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+    border-radius: 34px;
+    }
+
+    .slider.round:before {
+    border-radius: 50%;
+    }
+</style>
+<h1>Projects</h1>
+
+<div class="table-responsive">
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+              <th scope="col">Nome do Projeto</th>
+              <th scope="col">Data de inicio</th>
+              <th scope="col">Ultima atualização</th>
+              <th scope="col">Ação 1</th>
+              <th scope="col">Ação 2</th>
+            </tr>
+            <tr>
+                <th scope="col">
+                    <input type="text" class="form-control" id="NewProjetTitle" name="title" placeholder="Novo Projeto">
+                </th>
+                <th scope="col">
+                    <h6>Auto inserida</h6>
+                </th>
+                <th scope="col">
+                    <h6>Auto inserida</h6>
+                </th>
+                <th>
+                    <button type="submit" onclick="newProject()" class="btn btn-primary">Inserir</button>
+                </th>
+                <th>
+                    <button type="submit" onclick="getProjects();" class="btn btn-primary">Carregar Projetos</button>
+                </th>
+            </tr>
+          </thead>
+          <tbody id="projects">
+            <tr>
+              <td></td>
+              <td>Loading...</td>
+              <td></td>
+            </tr>
+    </table>
+
+</div>
+
+  
+<!-- Modal for Tasks -->
+<div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="ProjetNameTasks">Modal title</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div id="taskContent" class="modal-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover">
+                    <thead id="TaskThead">
+                       
+                    </thead>
+                    <tbody id="tbTasksBody">
+                        <tr>
+                        <td></td>
+                        <td>Loading...</td>
+                        <td></td>
+                        </tr>
+                </table>
+            
+            </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+    </div>
+    </div>
+</div>
+</div>
+
+
+    <!-- <ul id="projects">loading...</ul> -->
+
+<!-- <div class="container">
+    <table id="table" data-height="460">
+    <thead>
+        <tr>
+            <th data-field="id">Item ID</th>
+            <th data-field="name">Item Name</th>
+            <th data-field="price">Item Price</th>
+        </tr>
+    </thead>
+</table>
+</div> -->
