@@ -1,52 +1,72 @@
-function checkAlive(){
-    var req = new XMLHttpRequest();
-    req.open("GET", "/api/");
-    req.addEventListener("load", function() {
+function checkId(){
+    var xmlhttp = new XMLHttpRequest();
+    if (sessionStorage.getItem("userlevel") == 4) {
+        xmlhttp.open("GET", "http://34.89.108.223/companies/"+sessionStorage.getItem("id"));
+    } else {
+        xmlhttp.open("GET", "http://34.89.108.223/users/"+sessionStorage.getItem("id"));
+    }
+    xmlhttp.addEventListener("load", function() {
         try{
             var user = JSON.parse(this.responseText);
             console.log(user);
-            sessionStorage.setItem("username", user.username);
-            sessionStorage.setItem("id", user.id);
+            if (sessionStorage.getItem("userlevel") == 4) {
+                sessionStorage.setItem("firstname", user.msg.companyname);  
+            } else {
+                sessionStorage.setItem("firstname", user.msg.firstname);    
+            }
+            sessionStorage.setItem("lastname", user.msg.lastname);
+            sessionStorage.setItem("id", user.msg.id);
             sessionStorage.setItem("name", user.name);
-            sessionStorage.setItem("email", user.email);
-        }catch(e){
+            sessionStorage.setItem("email", user.msg.email);
+        }
+        catch(e){
             console.log(e)
-            sessionStorage.setItem("username", "");
+            sessionStorage.setItem("firstname", "");
+            sessionStorage.setItem("lastname", "");
             sessionStorage.setItem("id", "");
             sessionStorage.setItem("name", "");
             sessionStorage.setItem("email", "");
         }
-
-        loginMenuManager();
     });
-    req.send();
+    xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xmlhttp.setRequestHeader('Authorization', 'Bearer ' + sessionStorage.getItem("token"));
+    xmlhttp.send();
 }
 
-function logOut(){
-    var req = new XMLHttpRequest();
-    req.open("GET", "/api/user/logout");
-    req.addEventListener("load", function() {
-        sessionStorage.setItem("username", "");
-        loginMenuManager();
-    });
-    req.send();
-}
-
-
+//#region user management
 function userEdit(){
     var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("PUT", "/api/user/");
+    xmlhttp.open("PUT", "http://34.89.108.223/users/"+sessionStorage.getItem("id"));
     xmlhttp.addEventListener("load", function() {
         console.log("RAN RESPONSE");
-        //checkAlive();
+        loginMenuManager();
         location.reload();
     });
     xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xmlhttp.setRequestHeader('Authorization', 'Bearer ' + sessionStorage.getItem("token"));
     xmlhttp.send(JSON.stringify({
-        "name": document.getElementById("ChangeName").value,
+        "firstname": document.getElementById("ChangeFirstname").value,
+        "lastname": document.getElementById("ChangeLastname").value,
         "email" : document.getElementById("ChangeEmail").value,
-        "password" : document.getElementById("ChangePassword").value,
-        "id" : sessionStorage.getItem("username").value
+        "password" : document.getElementById("ChangePassword1").value
+    }));
+}
+
+function entityEdit(){
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("PUT", "http://34.89.108.223/companies/"+sessionStorage.getItem("id"));
+    xmlhttp.addEventListener("load", function() {
+        console.log("RAN RESPONSE");
+        loginMenuManager();
+        location.reload();
+    });
+    xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xmlhttp.setRequestHeader('Authorization', 'Bearer ' + sessionStorage.getItem("token"));
+    xmlhttp.send(JSON.stringify({
+        "companyname": document.getElementById("ChangeConpanyname").value,
+        "nif": document.getElementById("ChangeEmail").value,
+        "email" : document.getElementById("ChangeNif").value,
+        "password" : document.getElementById("ChangePassword2").value
     }));
 }
 
@@ -56,22 +76,34 @@ function userLogin(){
     xmlhttp.open("POST", "http://34.89.108.223/users/login");
     xmlhttp.addEventListener("load", function() {
         console.log("RAN RESPONSE");
-        //checkAlive();
+        loginMenuManager();
         try{
             var user = JSON.parse(this.responseText);
             console.log(user);
-            sessionStorage.setItem("username", user.username);
-            sessionStorage.setItem("id", user.id);
+            sessionStorage.setItem("firstname", user.msg.firstname);
+            sessionStorage.setItem("lastname", user.msg.lastname);
+            sessionStorage.setItem("id", user.msg.id);
             sessionStorage.setItem("name", user.name);
-            sessionStorage.setItem("email", user.email);
+            sessionStorage.setItem("email", user.msg.email);
+            sessionStorage.setItem("token", user.token);
+            if (user.msg.usertype.student || user.msg.usertype.graduate || user.msg.usertype.teaching ||user.msg.usertype.scholarship || user.msg.usertype.retired) {
+                sessionStorage.setItem("userlevel", 2);
+            } else if(user.msg.usertype.outsider){
+                sessionStorage.setItem("userlevel", 1)
+            } else if(user.msg.usertype.admin){
+                sessionStorage.setItem("userlevel", 3)
+            }
         }catch(e){
             console.log(e)
-            sessionStorage.setItem("username", "");
+            sessionStorage.setItem("firstname", "");
+            sessionStorage.setItem("lastname", "");
             sessionStorage.setItem("id", "");
             sessionStorage.setItem("name", "");
             sessionStorage.setItem("email", "");
+            sessionStorage.setItem("token", "");
+            sessionStorage.setItem("userlevel", 0);
         }
-        //window.location.href = "/";
+        window.location.href = "/";
     });
     xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     xmlhttp.send(JSON.stringify({
@@ -80,6 +112,231 @@ function userLogin(){
     }));
 }
 
+function enitityLogin(){
+
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("POST", "http://34.89.108.223/companies/login");
+    xmlhttp.addEventListener("load", function() {
+        console.log("RAN RESPONSE");
+        loginMenuManager();
+        try{
+            var user = JSON.parse(this.responseText);
+            console.log(user);
+            sessionStorage.setItem("firstname", user.msg.companyname);
+            sessionStorage.setItem("id", user.msg.id);
+            sessionStorage.setItem("email", user.msg.email);
+            sessionStorage.setItem("token", user.token);
+
+            sessionStorage.setItem("userlevel", 4)
+        }catch(e){
+            console.log(e)
+            sessionStorage.setItem("firstname", "");
+            sessionStorage.setItem("lastname", "");
+            sessionStorage.setItem("id", "");
+            sessionStorage.setItem("name", "");
+            sessionStorage.setItem("email", "");
+            sessionStorage.setItem("token", "");
+            sessionStorage.setItem("userlevel", 0);
+        }
+        window.location.href = "/";
+    });
+    xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xmlhttp.send(JSON.stringify({
+        "email": document.getElementById("entityUsername").value,
+        "password" : document.getElementById("entityPassword").value
+    }));
+}
+
+function logOut(){
+    sessionStorage.setItem("firstname", "");
+    sessionStorage.setItem("lastname", "");
+    sessionStorage.setItem("id", "");
+    sessionStorage.setItem("name", "");
+    sessionStorage.setItem("email", "");
+    sessionStorage.setItem("token", "");
+    sessionStorage.setItem("userlevel", 0);
+    window.location.href = "/";
+}
+
+function deleteMe(){
+    var xmlhttp = new XMLHttpRequest();
+    if (sessionStorage.getItem("userlevel") == 4) {
+        xmlhttp.open("DELETE", "http://34.89.108.223/companies/"+sessionStorage.getItem("id"));
+    } else {
+        xmlhttp.open("DELETE", "http://34.89.108.223/users/"+sessionStorage.getItem("id"));
+    }
+    xmlhttp.addEventListener("load", function() {
+        logOut();
+    });
+    xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xmlhttp.setRequestHeader('Authorization', 'Bearer ' + sessionStorage.getItem("token"));
+    xmlhttp.send();
+}
+
+function getEntities() {
+    var req = new XMLHttpRequest();
+    req.open("GET", "http://34.89.108.223/companies/");
+    req.addEventListener("load", function() {
+        var usersList = JSON.parse(this.responseText);
+
+        console.log(usersList);
+        var tb = document.getElementById('users');
+        console.log(tb)
+        tb.innerHTML = '';
+
+        for (var i in usersList) {
+            var tr = document.createElement('tr');
+
+            var tdName = document.createElement('td');
+            var tdEmail = document.createElement('td');
+            var tdPassword = document.createElement('td');
+            var tdButtonUpdateUser = document.createElement('td');
+            var tdButtonDeleteUser = document.createElement('td');
+            
+            tdName.innerHTML = "<input type='text' class='form-control' id='"+
+                usersList[i].id+"Name' name='companyname' placeholder='"+usersList[i].companyname+"'>";
+
+            tdEmail.innerHTML = "<input type='text' class='form-control' id='"+
+                usersList[i].id+"Email' name='email' placeholder='"+usersList[i].email+"'>";
+
+            tdPassword.innerHTML = "<input type='text' class='form-control' id='"+
+                usersList[i].id+"Password' name='password' placeholder='Password'>";
+
+            tdButtonUpdateUser.innerHTML = 
+                "<button type='button' class='btn btn-warning' onclick='updateUser(\"entity\", \"" + usersList[i].id +  "\")'  data-toggle='modal' data-target='#ModalCenter'>"+
+                    "Editar Utilizador"+
+                "</button>";
+                
+            tdButtonDeleteUser.innerHTML =
+                "<button type='button' class='btn btn-danger' onclick='deleteUser(\"entity\", \"" + usersList[i].id +  "\")'  data-toggle='modal' data-target='#ModalCenter'>"+
+                    "Apagar Utilizador"+
+                "</button>";
+            
+            tr.appendChild(tdName);
+            tr.appendChild(tdEmail);
+            tr.appendChild(tdPassword);
+            tr.appendChild(tdButtonUpdateUser);
+            tr.appendChild(tdButtonDeleteUser);
+
+            tb.appendChild(tr);
+        }
+        getUsers();
+    });
+    req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    req.setRequestHeader('Authorization', 'Bearer ' + sessionStorage.getItem("token"));
+    req.send();
+
+
+
+}
+
+function getUsers(){
+    var req = new XMLHttpRequest();
+    req.open("GET", "http://34.89.108.223/users/");
+    req.addEventListener("load", function() {
+        var usersList = JSON.parse(this.responseText);
+
+        console.log(usersList);
+        var tb = document.getElementById('users');
+        console.log(tb)
+
+        for (var i in usersList) {
+            var tr = document.createElement('tr');
+
+            var tdName = document.createElement('td');
+            var tdEmail = document.createElement('td');
+            var tdPassword = document.createElement('td');
+            var tdButtonUpdateUser = document.createElement('td');
+            var tdButtonDeleteUser = document.createElement('td');
+            
+            tdName.innerHTML = "<input type='text' class='form-control' id='"+
+                usersList[i].id+"Name' name='companyname' placeholder='"+usersList[i].firstname+"'>";
+
+            tdEmail.innerHTML = "<input type='text' class='form-control' id='"+
+                usersList[i].id+"Email' name='email' placeholder='"+usersList[i].email+"'>";
+
+            tdPassword.innerHTML = "<input type='text' class='form-control' id='"+
+                usersList[i].id+"Password' name='password' placeholder='Password'>";
+
+            tdButtonUpdateUser.innerHTML = 
+                "<button type='button' class='btn btn-warning' onclick='updateUser(\"user\", \"" + usersList[i].id +  "\")'  data-toggle='modal' data-target='#ModalCenter'>"+
+                    "Editar Utilizador"+
+                "</button>";
+                
+            tdButtonDeleteUser.innerHTML =
+                "<button type='button' class='btn btn-danger' onclick='deleteUser(\"user\", \"" + usersList[i].id +  "\")'  data-toggle='modal' data-target='#ModalCenter'>"+
+                    "Apagar Utilizador"+
+                "</button>";
+            
+            tr.appendChild(tdName);
+            tr.appendChild(tdEmail);
+            tr.appendChild(tdPassword);
+            tr.appendChild(tdButtonUpdateUser);
+            tr.appendChild(tdButtonDeleteUser);
+
+            tb.appendChild(tr);
+        }
+    });
+    req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    req.setRequestHeader('Authorization', 'Bearer ' + sessionStorage.getItem("token"));
+    req.send();
+}
+
+
+function updateUser(type,userId){
+    if (type == "entity") { 
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("PUT", "http://34.89.108.223/companies/"+userId);
+        xmlhttp.addEventListener("load", function() {
+            console.log("RAN RESPONSE");
+            loginMenuManager();
+            location.reload();
+        });
+        xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xmlhttp.setRequestHeader('Authorization', 'Bearer ' + sessionStorage.getItem("token"));
+        xmlhttp.send(JSON.stringify({
+            "email": document.getElementById(userId+"Email").value,
+            "companyname": document.getElementById(userId+"Name").value,
+            "password" : document.getElementById(userId+"Password").value
+        }));  
+    } else if(type == "user"){
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("PUT", "http://34.89.108.223/users/"+userId);
+        xmlhttp.addEventListener("load", function() {
+            console.log("RAN RESPONSE");
+            loginMenuManager();
+            location.reload();
+        });
+        xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xmlhttp.setRequestHeader('Authorization', 'Bearer ' + sessionStorage.getItem("token"));
+        xmlhttp.send(JSON.stringify({
+            "email": document.getElementById(userId+"Email").value,
+            "firstname": document.getElementById(userId+"Name").value,
+            "password" : document.getElementById(userId+"Password").value
+        }));   
+    }
+    
+}
+
+function deleteUser(type, userId){
+    var xmlhttp = new XMLHttpRequest();
+    if (type == "entity") { 
+        xmlhttp.open("DELETE", "http://34.89.108.223/companies/"+userId);
+    } else if(type == "user"){
+        xmlhttp.open("DELETE", "http://34.89.108.223/users/"+userId);
+    }
+    xmlhttp.addEventListener("load", function() {
+        console.log("RAN RESPONSE");
+        loginMenuManager();
+        location.reload();
+    });
+    xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xmlhttp.setRequestHeader('Authorization', 'Bearer ' + sessionStorage.getItem("token"));
+    xmlhttp.send();
+}
+//#endregion
+
+//#region project management
 function getProjects() {
     
     var req = new XMLHttpRequest();
@@ -130,7 +387,7 @@ function updateProject(id){
     xmlhttp.open("PUT", "/api/projects/"+id+"/");
     xmlhttp.addEventListener("load", function() {
         console.log("RAN RESPONSE");
-        //checkAlive();
+        loginMenuManager();
         location.reload();
         getProjects();
     });
@@ -146,7 +403,7 @@ function deleteProject(id){
     xmlhttp.open("DELETE", "/api/projects/"+id+"/");
     xmlhttp.addEventListener("load", function() {
         console.log("RAN RESPONSE");
-        //checkAlive();
+        loginMenuManager();
         location.reload();
         getProjects();
     });
@@ -160,7 +417,7 @@ function newProject(){
     xmlhttp.open("POST", "/api/projects/");
     xmlhttp.addEventListener("load", function() {
         console.log("RAN RESPONSE");
-        //checkAlive();
+        loginMenuManager();
         location.reload();
         getProjects();
     });
@@ -169,7 +426,9 @@ function newProject(){
         "title": document.getElementById("NewProjetTitle").value,
     }));
 }
+//#endregion
 
+//#region task management
 function getTasks(id) {
     
     var req = new XMLHttpRequest();
@@ -270,7 +529,7 @@ function newTask(id){
     xmlhttp.open("POST", "/api/projects/"+id+"/tasks/");
     xmlhttp.addEventListener("load", function() {
         console.log("RAN RESPONSE");
-        //checkAlive();
+        loginMenuManager();
         location.reload();
         getProjects();
     });
@@ -286,7 +545,7 @@ function updateTask(projectId,taskId){
     xmlhttp.open("PUT", "/api/projects/" + projectId + "/tasks/" + taskId + "/");
     xmlhttp.addEventListener("load", function() {
         console.log("RAN RESPONSE");
-        //checkAlive();
+        loginMenuManager();
         location.reload();
         getProjects();
     });
@@ -303,10 +562,11 @@ function deleteTask(projectId,taskId){
     xmlhttp.open("DELETE", "/api/projects/" + projectId + "/tasks/" + taskId + "/");
     xmlhttp.addEventListener("load", function() {
         console.log("RAN RESPONSE");
-        //checkAlive();
+        loginMenuManager();
         location.reload();
         getProjects();
     });
     xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     xmlhttp.send();
 }
+//#endregion

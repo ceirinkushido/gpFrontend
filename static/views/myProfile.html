@@ -1,23 +1,73 @@
 <!--
-    name TEXT,
-    email TEXT,
-    username TEXT,
-    password TEXT
+firstname:"Admin"
+lastname:"Admin"
+email:"admin@admin.com"
+password:"$2b$10$zvFILeRXOep2mAFsIYwn.uJR2FiWm7Z0MfjqaJzEaSLfqKe6G448e"
+
+usertype{
+  student:false
+  graduate:false
+  teaching:false
+  outsider:false
+  scholarship:false
+  retired:false
+  admin:true
+}
 -->
-<div class="form-group">
-  <label for="showPreviousData">Mostrar dados atuais?</label>
-  <input type="checkbox" id="showPreviousData" onchange="loadMe('userEdit')" data-toggle="toggle" data-on="Sim" data-off="Não">
+
+<label class="switch">
+  <input type="checkbox" id="togBtn" onclick="toggleVisibility('edit')">
+  <div class="slider round">
+  </div>
+</label>
+
+<div id="editUser" style="display: none;">
+  
+  <div class="form-group">
+    <label for="Changeusername">Nome</label>
+    <input type="text" class="form-control" id="ChangeFirstname" name="firstname" placeholder="Nome" required>
+  </div>
+  
+  <div class="form-group">
+    <label for="ChangePassword1">Apelido</label>
+    <input type="text" class="form-control" id="ChangeLastname" name="lastname" placeholder="Apelido" required>
+  </div>
+  
+  <div class="form-group">
+      <label for="ChangePassword1">Email</label>
+      <input type="text" class="form-control" id="ChangeEmail" name="email" placeholder="Email" required>
+  </div>
+  
+  <div class="form-group">
+      <label for="ChangePassword1">Password</label>
+      <input type="password" class="form-control" id="ChangePassword1" name="password" placeholder="Password" required>
+  </div>
+
+    <button type="submit" class="btn btn-primary" onclick="userEdit()">Guardar</button>
+    <button type="submit" class="btn btn-danger" onclick="deleteMe()">ApagarConta</button>
 </div>
-<div class="form-group">
-  <label for="ChangeName">Name</label>
-  <input type="text" class="form-control" id="ChangeName" name="name" placeholder="loading...">
+
+<id id="editEntity">
+  
+  <div class="form-group">
+    <label for="Changeusername">Nome</label>
+    <input type="text" class="form-control" id="ChangeConpanyname" name="companyname" placeholder="Nome" required>
+  </div>
+
+  <div class="form-group">
+      <label for="ChangePassword1">Email</label>
+      <input type="text" class="form-control" id="ChangeEmail" name="email" placeholder="Email" required>
+  </div>
+  
+  <div class="form-group">
+    <label for="ChangeNif">NIF</label>
+    <input type="text" class="form-control" id="ChangeNif" name="nif" placeholder="NIF" required>
+  </div>
+
+  <div class="form-group">
+      <label for="ChangePassword2">Password</label>
+      <input type="password" class="form-control" id="ChangePassword2" name="password" placeholder="Password" required>
+  </div>
+  <button type="submit" class="btn btn-primary" onclick="entityEdit()">Guardar</button>
+  <button type="submit" class="btn btn-danger" onclick="deleteMe()">ApagarConta</button>
 </div>
-<div class="form-group">
-  <label for="ChangeEmail">Email</label>
-  <input type="text" class="form-control" id="ChangeEmail" name="email" placeholder="loading...">
-</div>
-<div class="form-group">
-  <label for="ChangePassword">Password</label>
-  <input type="password" class="form-control" id="ChangePassword" name="password" placeholder="Password">
-</div>
-  <button type="submit" class="btn btn-primary" onclick="userEdit()">Submit</button>

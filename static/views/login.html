@@ -1,9 +1,29 @@
-<div class="form-group">
-  <label for="LoginUsername">Username</label>
-  <input type="text" class="form-control" id="LoginUsername" name="username" placeholder="Enter username">
+<label class="switch">
+  <input type="checkbox" id="togBtn" onclick="toggleVisibility('login')">
+  <div class="slider round">
+  </div>
+</label>
+
+<div id="loginUser" style="display: none;">
+  <div class="form-group">
+    <label for="LoginUsername">Email</label>
+    <input type="text" class="form-control" id="LoginUsername" name="username" placeholder="Enter username">
+  </div>
+  <div class="form-group">
+    <label for="LoginPassword">Password</label>
+    <input type="password" class="form-control" id="LoginPassword" name="password" placeholder="Password">
+  </div>
+    <button type="submit" onclick="userLogin()" class="btn btn-primary">Entrar</button>  
 </div>
-<div class="form-group">
-  <label for="LoginPassword">Password</label>
-  <input type="password" class="form-control" id="LoginPassword" name="password" placeholder="Password">
+
+<div id="loginEntity">
+  <div class="form-group">
+    <label for="entityUsername">Email</label>
+    <input type="text" class="form-control" id="entityUsername" name="username" placeholder="Enter username">
+  </div>
+  <div class="form-group">
+    <label for="entityPassword">Password</label>
+    <input type="password" class="form-control" id="entityPassword" name="password" placeholder="Password">
+  </div>
+    <button type="submit" onclick="enitityLogin()" class="btn btn-primary">Entrar</button>  
 </div>
-  <button type="submit" onclick="userLogin()" class="btn btn-primary">Submit</button>

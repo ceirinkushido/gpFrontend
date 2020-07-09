@@ -1,15 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <link rel="icon" type="image/png" href="https://github.githubassets.com/favicons/favicon-dark.png"/>
-    <!-- CSS only -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
-     integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-    <style>
-        .active{
-            color: #00B159 !important;
-        }
-    </style>
 
     <!--Scripts only-->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
@@ -23,10 +16,22 @@
     </script>
 
 
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+
+    <!-- CSS only -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+    integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <style>
+        .active{
+            color: #00B159 !important;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="/static/styles/customStyle.css">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mini-Projeto-4-SPA</title>
+    <title>Somos Voluntarios</title>
 
     <!--NAVBAR-->
     <nav class="navbar navbar-expand-lg navbar navbar-dark bg-dark">
@@ -48,8 +53,14 @@
                         Opções de utilizador
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="#myProfile" onclick="menuSwap('myProfile')">Meu Perfil</a> <!--TODO LINK E FUNCTION-->
+                        <a class="dropdown-item" href="#myProfile" onclick="menuSwap('myProfile')">Meu Perfil</a>
+
                         <div class="dropdown-divider"></div>
+                        
+                        <a class="dropdown-item" href="#editUsers" id="editUsers" onclick="menuSwap('editUsers')">Gerir utilizadores</a>
+
+                        <div class="dropdown-divider"></div>
+
                         <a class="dropdown-item" onclick="logOut()">Sair</a>
                     </div>
                 </li>
@@ -65,7 +76,10 @@
     </nav>
 
 </head>
-<body onload="checkAlive()">
+
+<iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
+
+<body onload="loginMenuManager()">
 
     <div class="jumbotron jumbotron-fluid">
         <div class="container" id="app">
@@ -77,7 +91,7 @@
     <script src="/static/js/router.js"></script>
     <script src="/static/js/app.js"></script>
     <script src="/static/js/apiCalls.js"></script>
-
+<!-- 
     <script>
         function myFunction() {
             var gbcFrame = document.getElementById("gbc");
@@ -85,7 +99,7 @@
             var bigRedButton = document.getElementById("bigRedButton");
             bigRedButton.style.display = "none";
         }
-    </script>
+    </script> -->
     </body>
 </html>
 
