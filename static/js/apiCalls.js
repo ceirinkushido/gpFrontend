@@ -340,7 +340,12 @@ function deleteUser(type, userId){
 function getProjects() {
     
     var req = new XMLHttpRequest();
-    req.open("GET", "/api/projects/");
+    if (sessionStorage.getItem("userlevel") == 3) {
+        req.open("GET", "http://34.89.108.223/projects/");
+    } else {
+        req.open("GET", "http://34.89.108.223/projects/aproved");
+    }
+
     req.addEventListener("load", function() {
         var projects = JSON.parse(this.responseText);
         console.log(projects);
@@ -351,40 +356,62 @@ function getProjects() {
             var tr = document.createElement('tr');
 
             var tdTitle = document.createElement('td');
-            var tdCreated = document.createElement('td');
-            var tdUpdated = document.createElement('td');
-            var tdButtonProjectActions = document.createElement('td');
+            var tdDescription = document.createElement('td');
+            var tdStart = document.createElement('td');
+            var tdEnd = document.createElement('td');
+            var tdWorkingHours = document.createElement('td');
+            var tdConfirmed = document.createElement('td');
             var tdButtonTasksView = document.createElement('td');
             
-            tdTitle.innerHTML = "<input type='text' class='form-control' id='"+projects[i].id+"Title' name='title' placeholder='"+projects[i].title+"'>";
-            tdCreated.innerHTML = projects[i].creation_date;
-            tdUpdated.innerHTML = projects[i].last_updated;
-            tdButtonProjectActions.innerHTML = 
-                "<div class='btn-group' role='group' aria-label='Basic example'>"+
-                    "<button type='button' type='submit' onclick='updateProject(" + projects[i].id +  ")' class='btn btn-outline-success'>Update</button>"+
-                    "<button type='button' type='submit' onclick='deleteProject(" + projects[i].id +  ")' class='btn btn-outline-danger'>Delete</button>"+
-                "</div>";
+            tdTitle.innerHTML = projects[i].name;
+            tdDescription.innerHTML = projects[i].project_description;
+            tdWorkingHours.innerHTML = projects[i].hours_per_day;
+            tdStart.innerHTML = projects[i].start_date;
+            tdEnd.innerHTML = projects[i].end_date;    
+
+            if (sessionStorage.getItem("userlevel") == 3) {
+                if (projects[i].project_status) {
+                    if (projects[i].students.includes(sessionStorage.getItem("id"))) {
+                        tdConfirmed.innerHTML = "<h5>Candidatado</h5>";
+                        tr.classList.add("table-success");
+                    }else{
+                        tdConfirmed.innerHTML = "<h5>Considere ajudar este projeto</h5>";
+                        tr.classList.add("table-info");
+                    }
+                } else {
+                    tdConfirmed.innerHTML = "<h5>ESTE PROJETO NÃO ESTÁ APROVADO</h5>\n"+
+                        "<button type='button' class='btn btn-warning' onclick='aproveProject(\"" + projects[i].id +  "\")'>"+
+                            "Aprovar Projeto"+
+                        "</button>";
+                    tr.classList.add("table-danger");
+                }
+                req.open("GET", "http://34.89.108.223/projects/");
+            }
+            
             tdButtonTasksView.innerHTML =
-                "<button type='button' class='btn btn-info' onclick='getTasks(" + projects[i].id +  ")'  data-toggle='modal' data-target='#ModalCenter'>"+
-                    "Ver Taregas"+
+                "<button type='button' class='btn btn-info' onclick='getTasks(\"" + projects[i].id +  "\")'  data-toggle='modal' data-target='#ModalCenter'>"+
+                    "Ver Detalhes"+
                 "</button>";
             
             tr.appendChild(tdTitle);
-            tr.appendChild(tdCreated);
-            tr.appendChild(tdUpdated);
-            tr.appendChild(tdButtonProjectActions);
+            tr.appendChild(tdDescription);
+            tr.appendChild(tdStart);
+            tr.appendChild(tdEnd);
+            tr.appendChild(tdWorkingHours);
+            tr.appendChild(tdConfirmed);
             tr.appendChild(tdButtonTasksView);
-
             tb.appendChild(tr);
         }
     });
+    req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    req.setRequestHeader('Authorization', 'Bearer ' + sessionStorage.getItem("token"));
     req.send();
 }
 
 function updateProject(id){
 
     var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("PUT", "/api/projects/"+id+"/");
+    xmlhttp.open("PUT", "http://34.89.108.223/projects/"+id);
     xmlhttp.addEventListener("load", function() {
         console.log("RAN RESPONSE");
         loginMenuManager();
@@ -392,15 +419,26 @@ function updateProject(id){
         getProjects();
     });
     xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xmlhttp.setRequestHeader('Authorization', 'Bearer ' + sessionStorage.getItem("token"));
     xmlhttp.send(JSON.stringify({
-        "title": document.getElementById(id+"Title").value,
+        "contact_person": document.getElementById(id+"contact_person").value,
+        "email": document.getElementById(id+"email").value,
+        "phone": document.getElementById(id+"phone").value,
+        "entities_involved": document.getElementById(id+"entities_involved").value,
+        "intervention_area": document.getElementById(id+"intervention_area").value,
+        "location": document.getElementById(id+"location").value,
+        "activities_description": document.getElementById(id+"activities_description").value,
+        "objectives": document.getElementById(id+"objectives").value,
+        "observations": document.getElementById(id+"observations").value,
+        "training_type": document.getElementById(id+"training_type").value,
+        "project_status": false
     }));
 }
 
 function deleteProject(id){
 
     var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("DELETE", "/api/projects/"+id+"/");
+    xmlhttp.open("DELETE", "http://34.89.108.223/projects/"+id);
     xmlhttp.addEventListener("load", function() {
         console.log("RAN RESPONSE");
         loginMenuManager();
@@ -408,13 +446,18 @@ function deleteProject(id){
         getProjects();
     });
     xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xmlhttp.setRequestHeader('Authorization', 'Bearer ' + sessionStorage.getItem("token"));
     xmlhttp.send();
 }
 
 function newProject(){
 
     var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("POST", "/api/projects/");
+    if (sessionStorage.getItem("userlevel") == 4) {
+        xmlhttp.open("POST", "http://34.89.108.223/projects/company/"+sessionStorage.getItem("id"));
+    } else {
+        xmlhttp.open("POST", "http://34.89.108.223/projects/users/"+sessionStorage.getItem("id"));
+    }
     xmlhttp.addEventListener("load", function() {
         console.log("RAN RESPONSE");
         loginMenuManager();
@@ -422,9 +465,56 @@ function newProject(){
         getProjects();
     });
     xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xmlhttp.setRequestHeader('Authorization', 'Bearer ' + sessionStorage.getItem("token"));
     xmlhttp.send(JSON.stringify({
-        "title": document.getElementById("NewProjetTitle").value,
+        "name": document.getElementById("name").value,
+        "contact_person": document.getElementById("contact_person").value,
+        "email" : document.getElementById("email").value,
+        "phone" : document.getElementById("phone").value,
+        "location" : document.getElementById("location").value,
+        "project_description" : document.getElementById("project_description").value,
+        "intervention_area" : document.getElementById("intervention_area").value,
+        "target_users" : document.getElementById("target_users").value,
+        "objectives": document.getElementById("objectives").value,
+        "activities_description" : document.getElementById("activities_description").value,
+        "specific_training" : document.getElementById("specific_training").checked,
+        "training_type" : document.getElementById("training_type").value,
+        "hours_per_day" : document.getElementById("hours_per_day").value,
+        "entities_involved" : document.getElementById("entities_involved").value,
+        "observations": document.getElementById("observations").value,
+        "start_date" : document.getElementById("start_date").value,
+        "end_date" : document.getElementById("end_date").value,
     }));
+}
+
+function aproveProject(id){
+    var req = new XMLHttpRequest();
+    req.open("PUT", "http://34.89.108.223/projects/"+id);
+    req.addEventListener("load", function() {
+        console.log("RAN RESPONSE");
+        loginMenuManager();
+        location.reload();
+        getProjects();
+    });
+    req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    req.setRequestHeader('Authorization', 'Bearer ' + sessionStorage.getItem("token"));
+    req.send(JSON.stringify({
+        "project_status": true
+    }));
+}
+
+function applyToProject(id){
+    var req = new XMLHttpRequest();
+    req.open("GET", "http://34.89.108.223/projects/apply/"+id+"/"+sessionStorage.getItem("id"));
+    req.addEventListener("load", function() {
+        console.log("RAN RESPONSE");
+        loginMenuManager();
+        location.reload();
+        getProjects();
+    });
+    req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    req.setRequestHeader('Authorization', 'Bearer ' + sessionStorage.getItem("token"));
+    req.send();
 }
 //#endregion
 
@@ -432,141 +522,157 @@ function newProject(){
 function getTasks(id) {
     
     var req = new XMLHttpRequest();
-    req.open("GET", "/api/projects/"+id+"/tasks/");
+    req.open("GET", "http://34.89.108.223/projects/"+id);
     req.addEventListener("load", function() {
         
         var tasks = JSON.parse(this.responseText);
         console.log(tasks);
-        
+        document.getElementById('ProjetNameTasks').innerHTML = "Detalhes do Projeto: "+tasks.msg.name;
         var th = document.getElementById('TaskThead');
         console.log(th)
         th.innerHTML = '';
 
+        //#region modal default table
         var trTitles = document.createElement('tr');
-        var trContent = document.createElement('tr');
 
-        var thTitle = document.createElement('th');
-        var thCreated = document.createElement('th');
-        var thCompleted = document.createElement('th');
+        var thContact = document.createElement('th');
+        var thEntities = document.createElement('th');
+        var thAreas = document.createElement('th');
+        var thLocation = document.createElement('th');
+        var thActivities = document.createElement('th');
+        var thObjectives = document.createElement('th');
+        var thObservations = document.createElement('th');
+        var thRequiredTraining = document.createElement('th');
+
         var thButtonTaskActions = document.createElement('th');
 
-        thTitle.innerHTML = "Nome da tarefa";
-        thCreated.innerHTML = "Data de inicio";
-        thCompleted.innerHTML = "Tarefa completa?";
+        thContact.innerHTML = "Contactos";
+        thEntities.innerHTML = "Entidades Envolvidas";
+        thAreas.innerHTML = "Areas de Intrevenção";
+        thLocation.innerHTML = "Localização";
+        thActivities.innerHTML = "Atividades";
+        thObjectives.innerHTML = "Objetivos";
+        thObservations.innerHTML = "Observações";
+        thRequiredTraining.innerHTML = "Treino Especializado";
         thButtonTaskActions.innerHTML = "Ação";
-
-        trTitles.appendChild(thTitle);
-        trTitles.appendChild(thCreated);
-        trTitles.appendChild(thCompleted);
-        trTitles.appendChild(thButtonTaskActions);
-
-        var thTitle1 = document.createElement('th');
-        var thCreated1 = document.createElement('th');
-        var thCompleted1 = document.createElement('th');
-        var thButtonTaskAction1 = document.createElement('th');
-
-        thTitle1.innerHTML = "<input type='text' class='form-control' id='NewTaskTitle' name='title' placeholder='Nova Tarefa'>";
-        thCreated1.innerHTML = "<h6>Auto inserida</h6>";
-        thCompleted1.innerHTML = "<h6>Auto inserida</h6>";
-        thButtonTaskAction1.innerHTML = "<button type='submit' onclick='newTask(" + id + ")' class='btn btn-primary'>Inserir</button>";
-
-        trContent.appendChild(thTitle1);
-        trContent.appendChild(thCreated1);
-        trContent.appendChild(thCompleted1);
-        trContent.appendChild(thButtonTaskAction1);
-
-        th.appendChild(trTitles);
-        th.appendChild(trContent);
         
+        trTitles.appendChild(thContact);
+        trTitles.appendChild(thEntities);
+        trTitles.appendChild(thAreas);
+        trTitles.appendChild(thLocation);
+        trTitles.appendChild(thActivities);
+        trTitles.appendChild(thObjectives);
+        trTitles.appendChild(thObservations);
+        trTitles.appendChild(thRequiredTraining);
+        trTitles.appendChild(thButtonTaskActions);
+        th.appendChild(trTitles);
+        //#endregion
+
         var tb = document.getElementById('tbTasksBody');
-        console.log(tb)
-        tb.innerHTML = '';
-        for (var i in tasks) {
+        var tr = document.createElement('tr');
+        tb.innerHTML="";
 
-            var tr = document.createElement('tr');
+        var tdContact = document.createElement('th');
+        var tdEntities = document.createElement('th');
+        var tdAreas = document.createElement('th');
+        var tdLocation = document.createElement('th');
+        var tdActivities = document.createElement('th');
+        var tdObjectives = document.createElement('th');
+        var tdObservations = document.createElement('th');
+        var tdRequiredTraining = document.createElement('th');
 
-            var tdTitle = document.createElement('td');
-            var tdCreated = document.createElement('td');
-            var tdCompleted = document.createElement('td');
-            var tdButtonTaskActions = document.createElement('td');
+        var tdButtonTaskActions = document.createElement('th');
+
+        if (sessionStorage.getItem("userlevel") == 3) {
             
-            tdTitle.innerHTML = "<input type='text' class='form-control' id='"+tasks[i].id+"Title' name='title' value='"+tasks[i].title+"'>";
-            tdCreated.innerHTML = tasks[i].creation_date;
-            if (tasks[i].completed == 1) {
-                tr.classList.add("bg-success")
-                tdCompleted.innerHTML = 
-                "<label class='switch'>"+
-                    "<input id='" + tasks[i].id + "Checked' type='checkbox' checked>"+
-                "<span class='slider round'></span>"+
-                "</label>";
-            }else{
-                tdCompleted.innerHTML = 
-                "<label class='switch'>"+
-                    "<input id='" + tasks[i].id + "Checked' type='checkbox'>"+
-                "<span class='slider round'></span>"+
-                "</label>";
+            tdContact.innerHTML = "<input type='text' class='form-control' id='"+
+                tasks.msg.id+"contact_person' name='companyname' placeholder='"+tasks.msg.contact_person+"'>\n"+
+                "<input type='text' class='form-control' id='"+
+                tasks.msg.id+"email' name='companyname' placeholder='"+tasks.msg.email+"'>\n"+
+                "<input type='text' class='form-control' id='"+
+                tasks.msg.id+"phone' name='companyname' placeholder='"+tasks.msg.phone+"'>";
+
+            tdEntities.innerHTML = "<input type='text' class='form-control' id='"+
+                tasks.msg.id+"entities_involved' name='companyname' placeholder='"+tasks.msg.entities_involved+"'>";
+            
+            tdAreas.innerHTML = "<input type='text' class='form-control' id='"+
+                tasks.msg.id+"intervention_area' name='companyname' placeholder='"+tasks.msg.intervention_area+"'>";
+            
+            tdLocation.innerHTML = "<input type='text' class='form-control' id='"+
+                tasks.msg.id+"location' name='companyname' placeholder='"+tasks.msg.location+"'>";
+            
+            tdActivities.innerHTML = "<input type='text' class='form-control' id='"+
+                tasks.msg.id+"activities_description' name='companyname' placeholder='"+tasks.msg.activities_description+"'>";
+            
+            tdObjectives.innerHTML = "<input type='text' class='form-control' id='"+
+                tasks.msg.id+"objectives' name='companyname' placeholder='"+tasks.msg.objectives+"'>";
+            
+            tdObservations.innerHTML = "<input type='text' class='form-control' id='"+
+                tasks.msg.id+"observations' name='companyname' placeholder='"+tasks.msg.observations+"'>";
+            
+            if (tasks.msg.specific_training) {
+                tdRequiredTraining.innerHTML = "<input type='text' class='form-control' id='"+
+                    tasks.msg.id+"training_type' name='companyname' placeholder='"+tasks.msg.training_type+"'>";
+            } else {
+                tdRequiredTraining.innerHTML = "<input type='hidden' class='form-control' id='"+
+                tasks.msg.id+"training_type' name='companyname' value='nenhum'> Não";
             }
+
+            tdButtonTaskActions.innerHTML =  
             
+                "<div class='btn-group' role='group' aria-label='Basic example'>"+
+                    "<button type='button' type='submit' onclick='updateProject(\"" + tasks.msg.id +  "\")' class='btn btn-warning'>Guardar</button>"+
+                    "<button type='button' type='submit' onclick='deleteProject(\"" + tasks.msg.id +  "\")' class='btn btn-danger'>Apagar</button>"+
+                    "<button type='button' type='submit' onclick='applyToProject(\"" + tasks.msg.id +  "\")' class='btn btn-success'>Candidatar</button>"
+                "</div>";
+
+        }else if(sessionStorage.getItem("id") != 4 ){
+
+            tdContact.innerHTML = tasks.msg.contact_person+"\n"+tasks.msg.email+"\n"+tasks.msg.phone;
+            tdEntities.innerHTML = tasks.msg.entities_involved;
+            tdAreas.innerHTML = tasks.msg.intervention_area;
+            tdLocation.innerHTML = tasks.msg.location;
+            tdActivities.innerHTML = tasks.msg.activities_description;
+            tdObjectives.innerHTML = tasks.msg.objectives;
+            tdObservations.innerHTML = tasks.msg.observations;
+            if (tasks.msg.specific_training) {
+                tdRequiredTraining.innerHTML = tasks.msg.training_type;
+            } else {
+                tdRequiredTraining.innerHTML = "Não";
+            }
             tdButtonTaskActions.innerHTML = 
                 "<div class='btn-group' role='group' aria-label='Basic example'>"+
-                    "<button type='button' type='submit' onclick='updateTask(" + id + "," + tasks[i].id +  ")' class='btn btn-warning'>Update</button>"+
-                    "<button type='button' type='submit' onclick='deleteTask(" + id + "," + tasks[i].id +  ")' class='btn btn-danger'>Delete</button>"+
+                    "<button type='button' type='submit' onclick='applyToProject(\"" + tasks.msg.id +  "\")' class='btn btn-success'>Candidatar</button>"
                 "</div>";
-            
-            tr.appendChild(tdTitle);
-            tr.appendChild(tdCreated);
-            tr.appendChild(tdCompleted);
-            tr.appendChild(tdButtonTaskActions);
-            tb.appendChild(tr);
+        }else{
+            tdContact.innerHTML = tasks.msg.contact_person+"\n"+tasks.msg.email+"\n"+tasks.msg.phone;
+            tdEntities.innerHTML = tasks.msg.entities_involved;
+            tdAreas.innerHTML = tasks.msg.intervention_area;
+            tdLocation.innerHTML = tasks.msg.location;
+            tdActivities.innerHTML = tasks.msg.activities_description;
+            tdObjectives.innerHTML = tasks.msg.objectives;
+            tdObservations.innerHTML = tasks.msg.observations;
+            if (tasks.msg.specific_training) {
+                tdRequiredTraining.innerHTML = tasks.msg.training_type;
+            } else {
+                tdRequiredTraining.innerHTML = "Não";
+            }
         }
+
+        tr.appendChild(tdContact);
+        tr.appendChild(tdEntities);
+        tr.appendChild(tdAreas);
+        tr.appendChild(tdLocation);
+        tr.appendChild(tdActivities);
+        tr.appendChild(tdObjectives);
+        tr.appendChild(tdObservations);
+        tr.appendChild(tdRequiredTraining);
+        tr.appendChild(tdButtonTaskActions);
+        tb.appendChild(tr);
     });
+    req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    req.setRequestHeader('Authorization', 'Bearer ' + sessionStorage.getItem("token"));
     req.send();
 }
 
-function newTask(id){
-
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("POST", "/api/projects/"+id+"/tasks/");
-    xmlhttp.addEventListener("load", function() {
-        console.log("RAN RESPONSE");
-        loginMenuManager();
-        location.reload();
-        getProjects();
-    });
-    xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    xmlhttp.send(JSON.stringify({
-        "title": document.getElementById("NewTaskTitle").value,
-    }));
-}
-
-function updateTask(projectId,taskId){
-
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("PUT", "/api/projects/" + projectId + "/tasks/" + taskId + "/");
-    xmlhttp.addEventListener("load", function() {
-        console.log("RAN RESPONSE");
-        loginMenuManager();
-        location.reload();
-        getProjects();
-    });
-    xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    xmlhttp.send(JSON.stringify({
-        "title": document.getElementById(taskId+"Title").value,
-        "completed": document.getElementById(taskId+"Checked").checked === true ? 1 : 0
-    }));
-}
-
-function deleteTask(projectId,taskId){
-
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("DELETE", "/api/projects/" + projectId + "/tasks/" + taskId + "/");
-    xmlhttp.addEventListener("load", function() {
-        console.log("RAN RESPONSE");
-        loginMenuManager();
-        location.reload();
-        getProjects();
-    });
-    xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    xmlhttp.send();
-}
 //#endregion

@@ -61,92 +61,180 @@
 </style>
 <h1>Projects</h1>
 
-<div class="table-responsive">
+<div id="loginEntity">
 
-    <table class="table table-hover">
-        <thead>
-            <tr>
-              <th scope="col">Nome do Projeto</th>
-              <th scope="col">Data de inicio</th>
-              <th scope="col">Ultima atualização</th>
-              <th scope="col">Ação 1</th>
-              <th scope="col">Ação 2</th>
-            </tr>
-            <tr>
-                <th scope="col">
-                    <input type="text" class="form-control" id="NewProjetTitle" name="title" placeholder="Novo Projeto">
-                </th>
-                <th scope="col">
-                    <h6>Auto inserida</h6>
-                </th>
-                <th scope="col">
-                    <h6>Auto inserida</h6>
-                </th>
-                <th>
-                    <button type="submit" onclick="newProject()" class="btn btn-primary">Inserir</button>
-                </th>
-                <th>
-                    <button type="submit" onclick="getProjects();" class="btn btn-primary">Carregar Projetos</button>
-                </th>
-            </tr>
-          </thead>
-          <tbody id="projects">
-            <tr>
-              <td></td>
-              <td>Loading...</td>
-              <td></td>
-            </tr>
-    </table>
+  <div class="row">
+    <div class="col">
+      <label for="name">Nome Do Projeto</label>
+      <input type="text" class="form-control" id="name" name="name" placeholder="Nome Do Projeto">
+    </div>
+    <div class="col">
+      <label for="contact_person">Responsavél</label>
+      <input type="text" class="form-control" id="contact_person" name="contact_person" placeholder="Responsavél">
+    </div>
+  </div>
 
+  <div class="row">
+    <div class="col">
+      <label for="email">email</label>
+      <input type="text" class="form-control" id="email" name="email" placeholder="email">
+    </div>
+    <div class="col">
+      <label for="phone">Telefone</label>
+      <input type="text" class="form-control" id="phone" name="phone" placeholder="Telefone">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <label for="location">Localização</label>
+      <input type="text" class="form-control" id="location" name="location" placeholder="Localização">
+    </div>
+    <div class="col">
+      <label for="project_description">Descrição do Projeto</label>
+      <input type="text" class="form-control" id="project_description" name="project_description" placeholder="Descrição do Projeto">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <label for="intervention_area">Area de Intrevenção</label>
+      <input type="text" class="form-control" id="intervention_area" name="intervention_area" placeholder="Area de Intrevenção">
+    </div>
+    <div class="col">
+      <label for="target_users">Publico Alvo</label>
+      <input type="text" class="form-control" id="target_users" name="target_users" placeholder="Publico Alvo">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <label for="objectives">Objetivos</label>
+      <input type="text" class="form-control" id="objectives" name="objectives" placeholder="Objetivos">
+    </div>
+    <div class="col">
+      <label for="activities_description">Descrição das atividades</label>
+      <input type="text" class="form-control" id="activities_description" name="activities_description" placeholder="Descrição das atividades">
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col">
+      <label for="specific_training">Nessecita de Treino Especial?</label>
+      <input type="checkbox" id="specific_training" name="specific_training">
+    </div>
+    <div class="col">
+      <label for="training_type">Tipo de Treino</label>
+      <input type="text" class="form-control" id="training_type" name="training_type" placeholder="Tipo de Treino">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <label for="hours_per_day">Horas de Trabalho</label>
+      <input type="text" class="form-control" id="hours_per_day" name="hours_per_day" placeholder="Entidades Envolvidas">
+    </div>
+    <div class="col">
+      <label for="intervention_area">Area de Intrevenção</label>
+      <input type="text" class="form-control" id="intervention_area" name="intervention_area" placeholder="Area de Intrevenção">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <label for="entities_involved">Entidades Envolvidas</label>
+      <input type="text" class="form-control" id="entities_involved" name="entities_involved" placeholder="Entidades Envolvidas">
+    </div>
+    <div class="col">
+      <label for="observations">Observações</label>
+      <input type="text" class="form-control" id="observations" name="observations" placeholder="Observações">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <label for="start_date">Data de Inicio</label>
+      <input type="date" class="form-control" id="start_date" name="start_date" value="2018-07-22">
+    </div>
+    <div class="col">
+      <label for="start_date">Data de Fim</label>
+      <input type="date" class="form-control" id="end_date" name="end_date"value="2018-07-22">
+    </div>
+  </div>
+    <button type="submit" onclick="newProject()" class="btn btn-primary">Submeter Novo Projeto</button>  
 </div>
 
+
+<div class="table-responsive">
+
+  <table class="table table-hover text-center">
+      <thead>
+          <tr>
+            <th scope="col">Nome do Projeto</th>
+            <th scope="col">Descrição</th>
+            <th scope="col">Inicio</th>
+            <th scope="col">Fim</th>
+            <th scope="col">Horas diárias</th>
+
+            <th scope="col">Registado?</th>
+            <th scope="col">Ver Detalhes</th>
+          </tr>
+        </thead>
+        <tbody id="projects">
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+              <button type="submit" class="btn btn-info" onclick="getProjects()">Carregar Projetos</button>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+  </table>
+
+</div>
   
 <!-- Modal for Tasks -->
 <div class="modal fade" id="ModalCenter" tabindex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-        <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="ProjetNameTasks">Modal title</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div id="taskContent" class="modal-body">
-
-            <div class="table-responsive">
-
-                <table class="table table-hover">
-                    <thead id="TaskThead">
-                       
-                    </thead>
-                    <tbody id="tbTasksBody">
-                        <tr>
+  <div class="modal-dialog modal-dialog-centered modal-full" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+          <h5 class="modal-title" id="ProjetNameTasks">Detalhes do Projeto: </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+      <div id="taskContent" class="modal-body">
+          <div class="table-responsive">
+              <table class="table table-hover">
+                  <thead id="TaskThead">
+                  </thead>
+                  <tbody id="tbTasksBody">
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                         <td></td>
                         <td>Loading...</td>
                         <td></td>
-                        </tr>
-                </table>
-            
-            </div>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                  </tbody>
+              </table>
+          </div>
+      </div>
+    
+  
+      <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+      </div>
     </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-    </div>
-    </div>
+  </div>
 </div>
-</div>
 
 
-    <!-- <ul id="projects">loading...</ul> -->
 
-<!-- <div class="container">
-    <table id="table" data-height="460">
-    <thead>
-        <tr>
-            <th data-field="id">Item ID</th>
-            <th data-field="name">Item Name</th>
-            <th data-field="price">Item Price</th>
-        </tr>
-    </thead>
-</table>
-</div> -->
