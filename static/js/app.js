@@ -3,7 +3,7 @@
         var router = new Router([
             new Route('landing', 'landing.html', true),
             new Route('login', 'login.html'), 
-            new Route('about', 'about.html'),
+            new Route('stats', 'stats.html'),
             new Route('myProfile', 'myProfile.html'),
             new Route('projects', 'projects.html'),
             new Route('register', 'register.html'),
@@ -68,7 +68,6 @@ function loginMenuManager(){
             $("#loginBtn").show();
             $("#registerBtn").show();
             $("#projectsBtn").hide();
-            $("#aboutBtn").hide();
             $("#editUsers").hide();
             break;
     };
